@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Hello World</title>
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+      }
+    </style>
+  </head>
+  <script src="src/pixi.min.js"></script>
+  <body>
+    <script type="text/javascript">
+      let type = "WebGL";
+      if (!PIXI.utils.isWebGLSupported()) {
+        type = "canvas";
+      }
+
+      PIXI.utils.sayHello(type);
+      let WW = window.innerWidth,
+        WH = window.innerHeight;
+
+      //Create a Pixi Application
+      let app = new PIXI.Application({
+        antialias: true
+      });
+
+      // Set app size to fill window
+      app.renderer.view.style.position = "absolute";
+      app.renderer.view.style.display = "block";
+      app.renderer.autoDensity = true;
+      app.renderer.resize(WW, WH);
+
+      // Define number of circles and scale
+      xQuantity = 30;
+      yQuantity = 16;
+      circleScale = 0.7;
+
+      // Draw the circles
+      for (let i = 0; i < xQuantity; i++) {
+        for (let j = 0; j < yQuantity; j++) {
+          let circle = new PIXI.Graphics();
+          radius =
+            Math.floor(Math.min(WW / xQuantity, WH / yQuantity) / 2) *
+            circleScale;
+          x = i * (WW / xQuantity) + radius / circleScale;
+          y = j * (WH / yQuantity) + radius / circleScale;
+
+          // Draw circle in white
+          circle.beginFill(0xff0000);
+          circle.drawCircle(x, y, radius);
+
+          // Random color filter
+          let hue = [0, 120, 240, 0][Math.floor(Math.random() * 3)];
+          let brightness = Math.random();
+
+          // Define and apply filters
+          let filter = new PIXI.filters.ColorMatrixFilter();
+          filter.brightness(brightness);
+          filter.hue(hue, true);
+          circle.filters = [filter];
+          circle.hue = hue;
+
+          // Enable mouse click interaction to change color
+          circle.interactive = true;
+          circle.buttonMode = true;
+          circle.hitArea = new PIXI.Circle(x, y, radius);
+          circle.click = repaintCircle;
+
+          // Add circle to stage
+          app.stage.addChild(circle);
+        }
+      }
+
+      //Add the canvas that Pixi automatically created for you to the HTML document
+      document.body.appendChild(app.view);
+
+      function repaintCircle(e) {
+        let hue = [0, 120, 240, 0][Math.floor(Math.random() * 3)];
+        let brightness = Math.random();
+
+        // Define and apply filters
+        let filter = this.filters[0];
+        // let hue = this.hue;
+        filter.brightness(brightness);
+        filter.hue(hue, true);
+      }
+
+      // let state = play;
+
+      // app.ticker.add(delta => gameLoop(delta));
+
+      // function gameLoop(delta) {
+      //   state(delta);
+      // }
+
+      // function play(delta) {
+      //   for (var circle of app.stage.children) {
+      //   }
+      // }
+    </script>
+  </body>
+</html>
